@@ -17,11 +17,12 @@ int main()
 {
 	vertex list[] =
 	{
-		{ -0.5f, -0.5f, 0.0f }, 
-		{ -0.5f,  0.5f, 0.0f },
+		{  0.5f,  0.5f, 0.0f }, 
 		{  0.5f, -0.5f, 0.0f },
-		{  0.5f,  0.5f, 0.0f },
+		{ -0.5f, -0.5f, 0.0f },
+		{ -0.5f,  0.5f, 0.0f },
 	};
+
 	uint32_t listSize = ARRAYSIZE(list);
 
 	Viewport viewport(1280, 720);
@@ -32,8 +33,23 @@ int main()
 
 	VertexArray vao;
 
-	VertexBuffer* buffer = new VertexBuffer(list, sizeof(vertex), listSize);
+	BufferLayout layout = {
+		{ "POSITION", 0, LayoutType::Float3, 0, 0 }
+	};
+
+	VertexBuffer* buffer = new VertexBuffer();
+	buffer->Create(list, sizeof(vertex), listSize);
+	buffer->SetLayout(layout);
+
+	uint32_t indices[] =
+	{
+		0,1,3, 
+		1,2,3, 
+	};
+	IndexBuffer* ibo = new IndexBuffer(indices, sizeof(indices));
+
 	vao.AddVertexBuffer(buffer);
+	vao.SetIndexBuffer(ibo);
 
 	while (window.IsOpen())
 	{
@@ -43,8 +59,7 @@ int main()
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 		
 		shader->Bind();
-		buffer->Bind();
-		vao.DrawArrays();
+		vao.DrawElements();
 
 		window.Clear();
 	}

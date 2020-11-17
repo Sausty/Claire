@@ -7,11 +7,18 @@ void VertexArray::Release()
 	{
 		i->Release();
 	}
+
+	ib->Release();
 }
 
 void VertexArray::AddVertexBuffer(VertexBuffer* buffer)
 {
 	m_VertexBuffers.push_back(buffer);
+}
+
+void VertexArray::SetIndexBuffer(IndexBuffer* buffer)
+{
+	ib = buffer;
 }
 
 void VertexArray::DrawArrays()
@@ -20,4 +27,12 @@ void VertexArray::DrawArrays()
 	{
 		Context::Get().DrawArrays(i->GetVerticesSize(), 0, DrawMode::TriangleStrip);
 	}
+}
+
+void VertexArray::DrawElements()
+{
+	for (auto i : m_VertexBuffers)
+		i->Bind();
+	ib->Bind();
+	Context::Get().DrawIndexed(ib->GetCount());
 }

@@ -4,9 +4,29 @@
 #include "Claire/Graphics/DX11/DX11Context.h"
 #include "Claire/Graphics/DX11/Shaders/DX11Shader.h"
 
-VertexBuffer::VertexBuffer(void* vertices, uint32_t vertexSize, uint32_t listSize)
-	: m_VertexSize(vertexSize), m_VerticesSize(listSize)
+VertexBuffer::VertexBuffer()
 {
+	
+}
+
+void VertexBuffer::Release()
+{
+	m_Buffer->Release();
+	m_Layout.GetNativeInputLayout()->Release();
+	delete this;
+}
+
+void VertexBuffer::SetLayout(const BufferLayout& layout)
+{
+	m_Layout = layout;
+	m_Layout.CalculateInputLayout();
+}
+
+void VertexBuffer::Create(void* vertices, uint32_t vertexSize, uint32_t listSize)
+{
+	m_VertexSize = vertexSize; 
+	m_VerticesSize = listSize;
+
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
 	buff_desc.ByteWidth = m_VertexSize * m_VerticesSize;
@@ -18,22 +38,6 @@ VertexBuffer::VertexBuffer(void* vertices, uint32_t vertexSize, uint32_t listSiz
 	init_data.pSysMem = vertices;
 
 	GraphicsAssert(Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_Buffer));
-
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0,  DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	uint32_t sizeLayout = ARRAYSIZE(layout);
-
-	const Shader* shader = Shader::CurrentlyBound();
-	GraphicsAssert(Context::Get().GetDevice()->CreateInputLayout(layout, sizeLayout, shader->GetData().VertexBlob->GetBufferPointer(), shader->GetData().VertexBlob->GetBufferSize(), &m_InputLayout));
-}
-
-void VertexBuffer::Release()
-{
-	m_Buffer->Release();
-	m_InputLayout->Release();
-	delete this;
 }
 
 void VertexBuffer::Bind()
@@ -41,7 +45,7 @@ void VertexBuffer::Bind()
 	UINT stride = m_VertexSize;
 	UINT offset = 0;
 	Context::Get().GetDeviceContext()->IASetVertexBuffers(0, 1, &m_Buffer, &stride, &offset);
-	Context::Get().GetDeviceContext()->IASetInputLayout(m_InputLayout);
+	Context::Get().GetDeviceContext()->IASetInputLayout(m_Layout.GetNativeInputLayout());
 }
 
 void VertexBuffer::Unbind()
