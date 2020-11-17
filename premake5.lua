@@ -34,7 +34,8 @@ project "Claire"
 
     includedirs
     {
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+        "ext/glm"
     }
 
     links
@@ -75,7 +76,8 @@ project "Sandbox"
 
     includedirs
     {
-        "Claire/src"
+        "Claire/src",
+        "ext/glm"
     }
 
     links
