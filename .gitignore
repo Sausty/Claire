@@ -1,0 +1,16 @@
+# VS2019 files
+
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.filters.user
+
+**.exe
+
+# Build dirs
+bin/
+bin-int/
+
+# IDE dirs
+.vscode/
+.vs/
