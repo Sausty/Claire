@@ -17,6 +17,8 @@ struct vertex
 	vec3 position;
 };
 
+// Define constant buffer data in a struct
+
 struct CUniform
 {
 	float r, g, b;
@@ -24,6 +26,8 @@ struct CUniform
 
 int main()
 {
+    // Quad vertices
+
 	vertex list[] =
 	{
 		{  0.5f,  0.5f, 0.0f }, 
@@ -31,17 +35,20 @@ int main()
 		{ -0.5f, -0.5f, 0.0f },
 		{ -0.5f,  0.5f, 0.0f },
 	};
-
 	uint32_t listSize = ARRAYSIZE(list);
 
+    // Create the viewport and the window
 	Viewport viewport(1280, 720);
 	Window window(viewport, L"My Window");
 
-	Shader* shader = new Shader(ReadFile("Shaders/HelloTriangle/HelloTriangle.hlsl"));
+    // Create the shader and bind it
+	Shader* shader = new Shader(ReadFile("shaders/shader.hlsl"));
 	shader->Bind();
 
+    // VERTEX ARRAY, BUFFERS AND INDEX BUFFERS
 	VertexArray vao;
 
+    // NAME, SEMANTIC INDEX, TYPE, INPUT SLOT, ALIGNED BYTE OFFSET
 	BufferLayout layout = {
 		{ "POSITION", 0, LayoutType::Float3, 0, 0 }
 	};
@@ -60,6 +67,8 @@ int main()
 	vao.AddVertexBuffer(buffer);
 	vao.SetIndexBuffer(ibo);
 	
+    // CONSTANT BUFFER FOR SHADER UNIFORMS
+
 	CUniform cb;
 	cb.r = 0.0;
 	cb.g = 1.0f;
@@ -69,11 +78,14 @@ int main()
 
 	while (window.IsOpen())
 	{
+        // Update and clears the window
 		window.Update();
 		window.ClearColor(0, 0.3f, 0.4f, 1);
 
+        // Set the render viewport
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 		
+        // Draw
 		cbo->BindForShader(shader);
 		shader->Bind();
 		cbo->Update();
@@ -82,7 +94,8 @@ int main()
 		window.Clear();
 	}
 
+    // Release the data
 	vao.Release();
-	cbo->Release();
+    cbo->Release();
 	shader->Release();
 }
