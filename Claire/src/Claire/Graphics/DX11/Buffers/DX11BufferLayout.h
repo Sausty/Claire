@@ -22,10 +22,24 @@ struct BufferElement
 	uint32_t SemanticIndex;
 	LayoutType Format;
 	uint32_t InputSlot;
-	uint32_t AlignedByteOffset;
+
+	uint32_t GetFormatSize() const
+	{
+		switch (Format)
+		{
+		case LayoutType::Float:	 return 4;
+		case LayoutType::Float2: return 4 * 2;
+		case LayoutType::Float3: return 4 * 3;
+		case LayoutType::Float4: return 4 * 4;
+		case LayoutType::Int:	 return 4;
+		case LayoutType::Int2:   return 4 * 2;
+		case LayoutType::Int3:   return 4 * 3;
+		case LayoutType::Int4:   return 4 * 4;
+		}
+	}
 };
 
-class BufferLayout
+class BufferLayout final
 {
 public:
 	BufferLayout() {}

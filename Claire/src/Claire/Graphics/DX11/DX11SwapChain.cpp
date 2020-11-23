@@ -44,10 +44,79 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	{
 		__debugbreak();
 	}
+
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
+	depthStencilDesc.Width = width;
+	depthStencilDesc.Height = height;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	result = device->CreateTexture2D(&depthStencilDesc, NULL, &m_DepthStencilBuffer);
+	if (FAILED(result))
+	{
+		__debugbreak();
+	}
+
+	result = device->CreateDepthStencilView(m_DepthStencilBuffer, NULL, &m_DepthStencilView);
+	if (FAILED(result))
+	{
+		__debugbreak();
+	}
+
+	D3D11_DEPTH_STENCIL_DESC depthstencildesc;
+	ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+	depthstencildesc.DepthEnable = true;
+	depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+
+	result = device->CreateDepthStencilState(&depthstencildesc, &m_DepthStencilState);
+	if (FAILED(result))
+	{
+		__debugbreak();
+	}
+
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+
+	rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+	result = device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState);
+	if (FAILED(result))
+	{
+		__debugbreak();
+	}
+
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	result = device->CreateSamplerState(&sampDesc, &m_SamplerState); //Create sampler state
+	if (FAILED(result))
+	{
+		__debugbreak();
+	}
 }
 
 void SwapChain::Release()
 {
+	m_SamplerState->Release();
+	m_RasterizerState->Release(); 
+	m_DepthStencilState->Release();
+	m_DepthStencilView->Release();
+	m_DepthStencilBuffer->Release();
 	m_Handle->Release();
 	delete this;
 }

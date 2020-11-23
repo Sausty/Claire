@@ -14,21 +14,42 @@ Shader::Shader(const std::string& source)
 
 void Shader::Release()
 {
+	for (int i = 0; i < m_Buffers.size(); i++)
+		m_Buffers[i]->Release();
+
 	m_Data.VertexShader->Release();
 	m_Data.FragmentShader->Release();
 }
 
-void Shader::Bind() const
+void Shader::Bind()
 {
 	s_CurrentlyBound = this;
 
 	Context::Get().GetDeviceContext()->VSSetShader(m_Data.VertexShader, NULL, 0);
 	Context::Get().GetDeviceContext()->PSSetShader(m_Data.FragmentShader, NULL, 0);
+
+	for (int i = 0; i < m_Buffers.size(); i++)
+		m_Buffers[i]->BindForShader(i);
+}
+
+void Shader::UpdateUniforms() const
+{
+	for (int i = 0; i < m_Buffers.size(); i++)
+		m_Buffers[i]->Update();
 }
 
 void Shader::Unbind() const
 {
+	s_CurrentlyBound = nullptr;
 
+	Context::Get().GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
+	Context::Get().GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
+}
+
+void Shader::AddConstantBuffer(ConstantBuffer* buff)
+{
+	m_Buffers.push_back(buff);
+	m_ExpectedSize++;
 }
 
 ID3DBlob* Shader::Compile(const std::string& source, const std::string& profile, const std::string& main, ShaderErrorInfo& info)

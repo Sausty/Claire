@@ -1,16 +1,37 @@
-cbuffer ColorConstantBuffer : register(b0)
+struct VS_INPUT
 {
-	float red;
-	float green;
-	float blue;
+	float4 position: POSITION;
+	float3 color: COLOR;
 };
 
-float4 VSMain(float4 pos : POSITION) : SV_Position
+struct VS_OUTPUT
 {
-	return pos;
+	float4 position: SV_POSITION;
+	float3 color: COLOR;
+};
+
+struct PS_INPUT
+{
+	float4 position: SV_POSITION;
+	float3 color: COLOR;
+};
+
+cbuffer MatrixConstantBuffer : register(b0)
+{
+	float4x4 Matrix;
+};
+
+VS_OUTPUT VSMain(VS_INPUT input)
+{
+	VS_OUTPUT output;
+
+	output.position = input.position;
+	output.color = input.color;
+
+	return output;
 }
 
-float4 PSMain(float4 pos : SV_POSITION) : SV_Target
+float4 PSMain(PS_INPUT input) : SV_Target
 {
-	return float4(red, green, blue, 1.0);
+	return float4(input.color, 1.0);
 }

@@ -1,37 +1,21 @@
 #include <Claire/Claire.h>
-#include <Claire/Graphics/DX11/Buffers/DX11VertexArray.h>
-#include <Claire/Graphics/DX11/Buffers/DX11VertexBuffer.h>
-#include <Claire/Graphics/DX11/Buffers/DX11ConstantBuffer.h>
-#include <Claire/Graphics/DX11/Shaders/DX11Shader.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-struct vec3
-{
-	float x, y, z;
-};
+#include <iostream>
 
 struct vertex
 {
-	vec3 position;
-};
-
-struct CUniform
-{
-	float r, g, b;
+	ClaireMath::vec3 position;
+	ClaireMath::vec3 color;
 };
 
 int main()
 {
 	vertex list[] =
 	{
-		{  0.5f,  0.5f, 0.0f }, 
-		{  0.5f, -0.5f, 0.0f },
-		{ -0.5f, -0.5f, 0.0f },
-		{ -0.5f,  0.5f, 0.0f },
+		ClaireMath::vec3(0.5f, 0.5f, 0.0f),  ClaireMath::vec3(1, 0, 0),
+		ClaireMath::vec3(0.5f,-0.5f, 0.0f),  ClaireMath::vec3(0, 1, 0),
+		ClaireMath::vec3(-0.5f,-0.5f, 0.0f), ClaireMath::vec3(0, 0, 1),
+		ClaireMath::vec3(-0.5f, 0.5f, 0.0f), ClaireMath::vec3(0, 1, 0)
 	};
-
 	uint32_t listSize = ARRAYSIZE(list);
 
 	Viewport viewport(1280, 720);
@@ -43,7 +27,8 @@ int main()
 	VertexArray vao;
 
 	BufferLayout layout = {
-		{ "POSITION", 0, LayoutType::Float3, 0, 0 }
+		{ "POSITION", 0, LayoutType::Float3, 0 },
+		{ "COLOR", 0, LayoutType::Float3, 0 }
 	};
 
 	VertexBuffer* buffer = new VertexBuffer();
@@ -59,30 +44,24 @@ int main()
 
 	vao.AddVertexBuffer(buffer);
 	vao.SetIndexBuffer(ibo);
-	
-	CUniform cb;
-	cb.r = 0.0;
-	cb.g = 1.0f;
-	cb.b = 0.0f;
 
-	ConstantBuffer* cbo = new ConstantBuffer(cb);
+	shader->Unbind();
 
 	while (window.IsOpen())
 	{
 		window.Update();
-		window.ClearColor(0, 0.3f, 0.4f, 1);
+		window.ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 		Context::Get().GetRendererContext()->SetViewport(viewport);
-		
-		cbo->BindForShader(shader);
+
 		shader->Bind();
-		cbo->Update();
 		vao.DrawElements();
+		shader->UpdateUniforms();
+		shader->Unbind();
 
 		window.Clear();
 	}
 
-	vao.Release();
-	cbo->Release();
 	shader->Release();
+	vao.Release();
 }

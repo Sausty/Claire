@@ -3,6 +3,20 @@
 #include "Claire/Core/DX11Assert.h"
 #include "Claire/Graphics/DX11/DX11Context.h"
 #include "Claire/Graphics/DX11/Shaders/DX11Shader.h"
+#include <iostream>
+
+static uint32_t GetByteOffset(const std::vector<BufferElement>& vec, int index)
+{
+	if (index == 0) return 0;
+
+	uint32_t offset = vec[1].GetFormatSize();
+	for (int i = 1; i < index; i++)
+	{
+		offset += vec[i].GetFormatSize();
+	}
+
+	return offset;
+}
 
 static DXGI_FORMAT ClaireToDXGI(LayoutType type)
 {
@@ -22,10 +36,11 @@ static DXGI_FORMAT ClaireToDXGI(LayoutType type)
 void BufferLayout::CalculateInputLayout()
 {
 	D3D11_INPUT_ELEMENT_DESC* desc = new D3D11_INPUT_ELEMENT_DESC[m_Layout.size()];
+
 	for (auto i = 0; i < m_Layout.size(); i++)
 	{
-		const BufferElement& element = m_Layout[i];
-		desc[i] = { element.Name.c_str(), element.SemanticIndex, ClaireToDXGI(element.Format), element.InputSlot, element.AlignedByteOffset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		const BufferElement& elem = m_Layout[i];
+		desc[i] = { elem.Name.c_str(), elem.SemanticIndex, ClaireToDXGI(elem.Format), elem.InputSlot, GetByteOffset(m_Layout, i), D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	const Shader* shader = Shader::CurrentlyBound();

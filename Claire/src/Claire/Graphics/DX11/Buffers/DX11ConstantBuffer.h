@@ -3,8 +3,6 @@
 #include <d3d11.h>
 #include <cstdint>
 
-#include "Claire/Graphics/DX11/Shaders/DX11Shader.h"
-
 #include <any>
 
 class ConstantBuffer
@@ -13,7 +11,9 @@ public:
 	ConstantBuffer(std::any data);
 	void Release();
 
-	void BindForShader(Shader* shader);
+	void BindForShader(int bufferIndex);
+	void Unbind();
+
 	void Update();
 
 	ID3D11Buffer* GetBufferHandle() const { return m_BufferHandle; }

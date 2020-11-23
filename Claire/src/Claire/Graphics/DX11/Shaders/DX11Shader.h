@@ -3,6 +3,9 @@
 #include <d3d11.h>
 #include <string>
 #include <fstream>
+#include <vector>
+
+#include "Claire/Graphics/DX11/Buffers/DX11ConstantBuffer.h"
 
 struct ShaderErrorInfo
 {
@@ -59,15 +62,19 @@ public:
 
 	inline Data& GetData() const { return m_Data; }
 
-	void Bind() const;
+	void Bind();
+	void UpdateUniforms() const;
 	void Unbind() const;
 
+	void AddConstantBuffer(ConstantBuffer* buff);
 private:
 	static ID3DBlob* Compile(const std::string& source, const std::string& profile, const std::string& main, ShaderErrorInfo& info);
 	void Load(const std::string& source);
 
 	std::string RemoveComments(const std::string& source);
 
+	std::vector<ConstantBuffer*> m_Buffers;
+	int m_ExpectedSize = 0;
 public:
 	static bool TryCompile(const std::string& source, std::string& error);
 	static bool TryCompileFromFile(const std::string& filepath, std::string& error);
