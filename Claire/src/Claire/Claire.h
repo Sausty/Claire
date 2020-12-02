@@ -2,6 +2,12 @@
 
 #include <Windows.h>
 
+#include "Core/Input/Keyboard.h"
+#include "Core/Input/KeyCodes.h"
+#include "Core/Input/Mouse.h"
+#include "Core/Input/MouseCodes.h"
+#include "Core/Input/InputManager.h"
+
 #include "Graphics/Window.h"
 #include "Graphics/DX11/DX11Types.h"
 

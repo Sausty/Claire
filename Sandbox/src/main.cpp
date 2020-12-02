@@ -1,27 +1,30 @@
 #include <Claire/Claire.h>
 #include <iostream>
 
+using namespace ClaireMath;
+using namespace ClaireInput;
+
 struct vertex
 {
-	ClaireMath::vec3 position;
-	ClaireMath::vec3 color;
+	vec3 position;
+	vec3 color;
 };
 
 struct CBO
 {
-	ClaireMath::mat4 modelMatrix;
-	ClaireMath::mat4 viewMatrix;
-	ClaireMath::mat4 projectionMatrix;
+	mat4 modelMatrix;
+	mat4 viewMatrix;
+	mat4 projectionMatrix;
 };
 
 int main()
 {
 	vertex list[] =
 	{
-		ClaireMath::vec3(0.5f, 0.5f, 0.0f),  ClaireMath::vec3(1, 0, 0),
-		ClaireMath::vec3(0.5f,-0.5f, 0.0f),  ClaireMath::vec3(0, 1, 0),
-		ClaireMath::vec3(-0.5f,-0.5f, 0.0f), ClaireMath::vec3(0, 0, 1),
-		ClaireMath::vec3(-0.5f, 0.5f, 0.0f), ClaireMath::vec3(0, 1, 0)
+		vec3(0.5f, 0.5f, 0.0f), vec3(1, 0, 0),
+		vec3(0.5f,-0.5f, 0.0f), vec3(0, 1, 0),
+		vec3(-0.5f,-0.5f, 0.0f),vec3(0, 0, 1),
+		vec3(-0.5f, 0.5f, 0.0f),vec3(0, 1, 0)
 	};
 	uint32_t listSize = ARRAYSIZE(list);
 
@@ -72,7 +75,9 @@ int main()
 		shader->Bind();
 		constantBuffer->BindForShader(0);
 		constantBuffer->Update(&data);
+
 		vao.DrawElements();
+
 		shader->Unbind();
 
 		window.Clear();

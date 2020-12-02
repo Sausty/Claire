@@ -1,4 +1,6 @@
 #include "Window.h"
+#include "Claire/Core/Input/InputManager.h"
+#include "Claire/Core/Input/MouseCodes.h"
 
 Window* WindowPointer = nullptr;
 
@@ -27,6 +29,42 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	
 	case WM_SIZE:
 	{
+		break;
+	}
+
+	case WM_LBUTTONDOWN:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonLeft] = true;
+		break;
+	}
+
+	case WM_LBUTTONUP:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonLeft] = false;
+		break;
+	}
+
+	case WM_RBUTTONDOWN:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonRight] = true;
+		break;
+	}
+
+	case WM_RBUTTONUP:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonRight] = false;
+		break;
+	}
+
+	case WM_MBUTTONDOWN:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonMiddle] = true;
+		break;
+	}
+
+	case WM_MBUTTONUP:
+	{
+		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonMiddle] = false;
 		break;
 	}
 
