@@ -16,16 +16,20 @@ struct PS_INPUT
 	float3 color: COLOR;
 };
 
-cbuffer MatrixConstantBuffer : register(b0)
+cbuffer constant : register(b0)
 {
-	float4x4 Matrix;
+	float4x4 ModelMatrix;
+	float4x4 ViewMatrix;
+	float4x4 ProjectionMatrix;
 };
 
 VS_OUTPUT VSMain(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
-	output.position = input.position;
+	output.position = mul(input.position, ModelMatrix);
+	output.position = mul(output.position, ViewMatrix);
+	output.position = mul(output.position, ProjectionMatrix);
 	output.color = input.color;
 
 	return output;

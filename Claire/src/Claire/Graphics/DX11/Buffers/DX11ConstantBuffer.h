@@ -3,21 +3,18 @@
 #include <d3d11.h>
 #include <cstdint>
 
-#include <any>
-
 class ConstantBuffer
 {
 public:
-	ConstantBuffer(std::any data);
+	ConstantBuffer(void* data, uint32_t size);
 	void Release();
 
 	void BindForShader(int bufferIndex);
 	void Unbind();
 
-	void Update();
+	void Update(void* data);
 
 	ID3D11Buffer* GetBufferHandle() const { return m_BufferHandle; }
 private:
-	std::any m_Data;
 	ID3D11Buffer* m_BufferHandle = nullptr;
 };

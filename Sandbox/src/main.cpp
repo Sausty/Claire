@@ -7,6 +7,13 @@ struct vertex
 	ClaireMath::vec3 color;
 };
 
+struct CBO
+{
+	ClaireMath::mat4 modelMatrix;
+	ClaireMath::mat4 viewMatrix;
+	ClaireMath::mat4 projectionMatrix;
+};
+
 int main()
 {
 	vertex list[] =
@@ -23,6 +30,14 @@ int main()
 
 	Shader* shader = new Shader(ReadFile("Shaders/HelloTriangle/HelloTriangle.hlsl"));
 	shader->Bind();
+
+	CBO data;
+
+	data.modelMatrix = ClaireMath::Translation(ClaireMath::vec3(0, 0, 0));
+	data.viewMatrix = ClaireMath::mat4::Identity();
+	data.projectionMatrix = ClaireMath::Perspective(viewport.AspectRatio(), 70, 0.01, 10000);
+
+	ConstantBuffer* constantBuffer = new ConstantBuffer(&data, sizeof(CBO));
 
 	VertexArray vao;
 
@@ -55,8 +70,9 @@ int main()
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 
 		shader->Bind();
+		constantBuffer->BindForShader(0);
+		constantBuffer->Update(&data);
 		vao.DrawElements();
-		shader->UpdateUniforms();
 		shader->Unbind();
 
 		window.Clear();

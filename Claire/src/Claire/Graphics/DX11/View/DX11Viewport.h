@@ -25,6 +25,11 @@ public:
 		m_Viewport.MaxDepth = 1.0f;
 	}
 
+	float AspectRatio()
+	{
+		return m_Width / m_Height;
+	}
+
 	D3D11_VIEWPORT GetViewport() const { return m_Viewport; }
 private:
 	UINT m_Width;

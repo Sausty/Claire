@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "tvec2.h"
+#include <cmath>
 
 namespace ClaireMath
 {
@@ -49,7 +50,7 @@ namespace ClaireMath
 
 		tvec3<T> Cross(const tvec3<T>& other);
 		float Dot(const tvec3<T>& other);
-		float Magnitude();
+		float Magnitude() const;
 		tvec3<T> Normalise() const;
 		float Distance(const tvec3<T>& other);
 
@@ -139,7 +140,7 @@ namespace ClaireMath
 		return x * other.x + y * other.y + z * other.z;
 	}
 	template<typename T>
-	float tvec3<T>::Magnitude()
+	float tvec3<T>::Magnitude() const
 	{
 		return sqrt(x * x + y * y + z * z);
 	}

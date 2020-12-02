@@ -5,18 +5,17 @@
 
 #include <iostream>
 
-ConstantBuffer::ConstantBuffer(std::any data)
-	: m_Data(data)
+ConstantBuffer::ConstantBuffer(void* data, uint32_t size)
 {
 	D3D11_BUFFER_DESC buff_desc;
 	ZeroMemory(&buff_desc, sizeof(D3D11_BUFFER_DESC));
-	buff_desc.ByteWidth = sizeof(data);
+	buff_desc.ByteWidth = size;
 	buff_desc.Usage = D3D11_USAGE_DYNAMIC;
 	buff_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	D3D11_SUBRESOURCE_DATA init_data;
-	init_data.pSysMem = &data;
+	init_data.pSysMem = data;
 	init_data.SysMemPitch = 0;
 	init_data.SysMemSlicePitch = 0;
 
@@ -41,7 +40,7 @@ void ConstantBuffer::Unbind()
 	Context::Get().GetDeviceContext()->PSSetConstantBuffers(0, 1, nullptr);
 }
 
-void ConstantBuffer::Update()
+void ConstantBuffer::Update(void* data)
 {
-	Context::Get().GetDeviceContext()->UpdateSubresource(m_BufferHandle, NULL, NULL, &m_Data, NULL, NULL);
+	Context::Get().GetDeviceContext()->UpdateSubresource(m_BufferHandle, NULL, NULL, data, NULL, NULL);
 }

@@ -34,8 +34,7 @@ void Shader::Bind()
 
 void Shader::UpdateUniforms() const
 {
-	for (int i = 0; i < m_Buffers.size(); i++)
-		m_Buffers[i]->Update();
+	
 }
 
 void Shader::Unbind() const

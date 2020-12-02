@@ -16,3 +16,5 @@
 #include "Maths/vectors/tvec2.h"
 #include "Maths/vectors/tvec3.h"
 #include "Maths/vectors/tvec4.h"
+#include "Maths/matrices/mat4.h"
+#include "Maths/transform/mat4transform.h"
