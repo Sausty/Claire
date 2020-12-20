@@ -7,17 +7,16 @@
 
 ConstantBuffer::ConstantBuffer(void* data, uint32_t size)
 {
-	D3D11_BUFFER_DESC buff_desc;
-	ZeroMemory(&buff_desc, sizeof(D3D11_BUFFER_DESC));
+	D3D11_BUFFER_DESC buff_desc = {};
+	buff_desc.Usage = D3D11_USAGE_DEFAULT;
 	buff_desc.ByteWidth = size;
-	buff_desc.Usage = D3D11_USAGE_DYNAMIC;
 	buff_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	buff_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	buff_desc.CPUAccessFlags = 0;
+	buff_desc.MiscFlags = 0;
 
-	D3D11_SUBRESOURCE_DATA init_data;
+	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = data;
-	init_data.SysMemPitch = 0;
-	init_data.SysMemSlicePitch = 0;
+
 
 	GraphicsAssert(Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_BufferHandle))
 }

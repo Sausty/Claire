@@ -1,6 +1,8 @@
 #include <Claire/Claire.h>
 #include <iostream>
 
+#include "SandboxCamera.h"
+
 using namespace ClaireMath;
 using namespace ClaireInput;
 
@@ -10,15 +12,10 @@ struct vertex
 	vec3 color;
 };
 
-struct CBO
-{
-	mat4 modelMatrix;
-	mat4 viewMatrix;
-	mat4 projectionMatrix;
-};
-
 int main()
 {
+	SandboxCamera sbCamera(-1.0f, 1.0f, -1.0f, 1.0f);
+
 	vertex list[] =
 	{
 		vec3(0.5f, 0.5f, 0.0f), vec3(1, 0, 0),
@@ -34,13 +31,8 @@ int main()
 	Shader* shader = new Shader(ReadFile("Shaders/HelloTriangle/HelloTriangle.hlsl"));
 	shader->Bind();
 
-	CBO data;
-
-	data.modelMatrix = ClaireMath::Translation(ClaireMath::vec3(0, 0, 0));
-	data.viewMatrix = ClaireMath::mat4::Identity();
-	data.projectionMatrix = ClaireMath::Perspective(viewport.AspectRatio(), 70, 0.01, 10000);
-
-	ConstantBuffer* constantBuffer = new ConstantBuffer(&data, sizeof(CBO));
+	mat4 cam = sbCamera.GetViewProjectionMatrix();
+	ConstantBuffer* constantBuffer = new ConstantBuffer(&cam, sizeof(mat4));
 
 	VertexArray vao;
 
@@ -73,8 +65,11 @@ int main()
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 
 		shader->Bind();
+
+		sbCamera.Update();
 		constantBuffer->BindForShader(0);
-		constantBuffer->Update(&data);
+		mat4 cam = sbCamera.GetViewProjectionMatrix();
+		constantBuffer->Update(&cam);
 
 		vao.DrawElements();
 

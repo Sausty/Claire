@@ -94,24 +94,26 @@ namespace ClaireMath
 		return result;
 	}
 
-	static mat4 LookAt(const vec3& cameraPos, const vec3& objectPos, const vec3& up)
+	static mat4 LookAt(const vec3& camera, const vec3& object, const vec3& up)
 	{
 		mat4 result = mat4::Identity();
-
-		vec3 f = (objectPos - cameraPos).Normalise();
+		vec3 f0(object.x - camera.x, object.y - camera.y, object.z - camera.z);
+		vec3 f = f0.Normalise();
 		vec3 s = f.Cross(up.Normalise());
 		vec3 u = s.Cross(f);
 
 		result.data[0 + 0 * 4] = s.x;
 		result.data[0 + 1 * 4] = s.y;
 		result.data[0 + 2 * 4] = s.z;
+
 		result.data[1 + 0 * 4] = u.x;
 		result.data[1 + 1 * 4] = u.y;
 		result.data[1 + 2 * 4] = u.z;
+
 		result.data[2 + 0 * 4] = -f.x;
 		result.data[2 + 1 * 4] = -f.y;
 		result.data[2 + 2 * 4] = -f.z;
 
-		return result * Translation(vec3(-cameraPos.x, -cameraPos.y, -cameraPos.z));
+		return result * Translation(vec3(-camera.x, -camera.y, -camera.z));
 	}
 }

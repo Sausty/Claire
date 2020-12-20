@@ -48,7 +48,7 @@ namespace ClaireMath
 		bool operator==(const tvec3<T>& other);
 		bool operator!=(const tvec3<T>& other);
 
-		tvec3<T> Cross(const tvec3<T>& other);
+		tvec3<T> Cross(const tvec3<T>& other) const;
 		float Dot(const tvec3<T>& other);
 		float Magnitude() const;
 		tvec3<T> Normalise() const;
@@ -130,7 +130,7 @@ namespace ClaireMath
 		return !(*this == other);
 	}
 	template<typename T>
-	tvec3<T> tvec3<T>::Cross(const tvec3<T>& other)
+	tvec3<T> tvec3<T>::Cross(const tvec3<T>& other) const
 	{
 		return tvec3<T>(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
 	}
@@ -145,7 +145,7 @@ namespace ClaireMath
 		return sqrt(x * x + y * y + z * z);
 	}
 	template<typename T>
-	tvec3<T> tvec3<T>::Normalise() const
+	inline tvec3<T> tvec3<T>::Normalise() const
 	{
 		float length = Magnitude();
 		return tvec3<T>(x / length, y / length, z / length);
@@ -172,7 +172,7 @@ namespace ClaireMath
 		return left.Add(right);
 	}
 	template<typename T>
-	tvec3<T> operator-(tvec3<T> left, const tvec3<T>& right)
+	inline tvec3<T> operator-(tvec3<T> left, const tvec3<T>& right)
 	{
 		return left.Substract(right);
 	}

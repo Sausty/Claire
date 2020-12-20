@@ -18,18 +18,14 @@ struct PS_INPUT
 
 cbuffer constant : register(b0)
 {
-	float4x4 ModelMatrix;
-	float4x4 ViewMatrix;
-	float4x4 ProjectionMatrix;
+	float4x4 ViewProjectionMatrix;
 };
 
 VS_OUTPUT VSMain(VS_INPUT input)
 {
 	VS_OUTPUT output;
 
-	output.position = mul(input.position, ModelMatrix);
-	output.position = mul(output.position, ViewMatrix);
-	output.position = mul(output.position, ProjectionMatrix);
+	output.position = mul(input.position, ViewProjectionMatrix);
 	output.color = input.color;
 
 	return output;

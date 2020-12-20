@@ -15,7 +15,7 @@ namespace ClaireMath
 		T x, y, z, w;
 
 		tvec4<T>();
-		tvec4<T>(const T& x, const T& y, const T& z);
+		tvec4<T>(const T& x, const T& y, const T& z, const T& w);
 		tvec4<T>(T scalar);
 		tvec4<T>(const tvec4<T>& other);
 		tvec4<T>(const tvec3<T>& other);
@@ -67,7 +67,7 @@ namespace ClaireMath
 		w = 0;
 	}
 	template<typename T>
-	tvec4<T>::tvec4(const T& x, const T& y, const T& z)
+	tvec4<T>::tvec4(const T& x, const T& y, const T& z, const T& w)
 		: x(x), y(y), z(z), w(w)
 	{
 	}
