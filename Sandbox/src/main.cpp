@@ -10,18 +10,19 @@ struct vertex
 {
 	vec3 position;
 	vec3 color;
+	vec2 texcoord;
 };
 
 int main()
 {
-	SandboxCamera sbCamera(-1.0f, 1.0f, -1.0f, 1.0f);
+	SandboxCamera sbCamera(-1.6f, 1.6f, -0.9f, 0.9f);
 
 	vertex list[] =
 	{
-		vec3(0.5f, 0.5f, 0.0f), vec3(1, 0, 0),
-		vec3(0.5f,-0.5f, 0.0f), vec3(0, 1, 0),
-		vec3(-0.5f,-0.5f, 0.0f),vec3(0, 0, 1),
-		vec3(-0.5f, 0.5f, 0.0f),vec3(0, 1, 0)
+		vec3( 0.5f, 0.5f, 0.0f), vec3(1, 0, 0), vec2(1.0, 1.0),
+		vec3( 0.5f,-0.5f, 0.0f), vec3(0, 1, 0), vec2(1.0, 0.0),
+		vec3(-0.5f,-0.5f, 0.0f), vec3(0, 0, 1), vec2(0.0, 0.0),
+		vec3(-0.5f, 0.5f, 0.0f), vec3(1, 1, 0), vec2(0.0, 1.0)
 	};
 	uint32_t listSize = ARRAYSIZE(list);
 
@@ -38,7 +39,8 @@ int main()
 
 	BufferLayout layout = {
 		{ "POSITION", 0, LayoutType::Float3, 0 },
-		{ "COLOR", 0, LayoutType::Float3, 0 }
+		{ "COLOR", 0, LayoutType::Float3, 0 },
+		{ "TEXCOORD", 0, LayoutType::Float2, 0 }
 	};
 
 	VertexBuffer* buffer = new VertexBuffer();
@@ -47,8 +49,8 @@ int main()
 
 	uint32_t indices[] =
 	{
-		0,1,3, 
-		1,2,3, 
+		0, 1, 3, 
+		1, 2, 3
 	};
 	IndexBuffer* ibo = new IndexBuffer(indices, sizeof(indices));
 
@@ -56,6 +58,8 @@ int main()
 	vao.SetIndexBuffer(ibo);
 
 	shader->Unbind();
+
+	Texture2D tex(L"res/textures/container.png");
 
 	while (window.IsOpen())
 	{
@@ -65,6 +69,7 @@ int main()
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 
 		shader->Bind();
+		tex.Bind(0, shader);
 
 		sbCamera.Update();
 		constantBuffer->BindForShader(0);
@@ -73,11 +78,13 @@ int main()
 
 		vao.DrawElements();
 
+		tex.Unbind();
 		shader->Unbind();
 
 		window.Clear();
 	}
 
 	shader->Release();
+	tex.Release();
 	vao.Release();
 }

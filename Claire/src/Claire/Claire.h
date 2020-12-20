@@ -18,6 +18,7 @@
 #include "Graphics/DX11/Buffers/DX11VertexBuffer.h"
 #include "Graphics/DX11/Buffers/DX11ConstantBuffer.h"
 #include "Graphics/DX11/Shaders/DX11Shader.h"
+#include "Graphics/DX11/Textures/DX11Texture2D.h"
 
 #include "Maths/vectors/tvec2.h"
 #include "Maths/vectors/tvec3.h"

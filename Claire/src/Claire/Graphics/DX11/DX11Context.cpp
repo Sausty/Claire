@@ -1,6 +1,11 @@
 #include "DX11Context.h"
 
 #include "Claire/Graphics/Window.h"
+#include <Windows.h>
+#include <DirectXTex.h>
+#include <DirectXTex.inl>
+#include <wrl.h>
+#include <stdexcept>
 
 void Context::Init(const Window& window)
 {
@@ -43,6 +48,11 @@ void Context::Init(const Window& window)
 
 	m_RendererSwapChain = new SwapChain();
 	m_RendererSwapChain->Create(m_WindowHandle, window.GetWidth(), window.GetHeight());
+
+	auto hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+	if (FAILED(hr)) {
+		throw std::runtime_error("COM Library is already initialized on this thread.");
+	}
 }
 
 void Context::Shutdown()

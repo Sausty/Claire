@@ -35,13 +35,15 @@ project "Claire"
     includedirs
     {
         "%{prj.name}/src",
-        "ext/glm"
+        "ext/glm",
+        "third_party/DirectXTex/include"
     }
 
     links
     {
         "d3d11",
-        "d3dcompiler"
+        "d3dcompiler",
+        "ole32"
     }
 
     filter "system:windows"
@@ -51,10 +53,14 @@ project "Claire"
     filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
+        buildoptions "/MDd"
+        links { "third_party/DirectXTex/bin/DirectXTexD.lib" }
 
 	filter "configurations:Release"
 		runtime "Release"
         optimize "On"
+        buildoptions "/MT"
+        links { "third_party/DirectXTex/bin/DirectXTex.lib" }
 
 project "Sandbox"
     location "Sandbox"
@@ -91,7 +97,9 @@ project "Sandbox"
     filter "configurations:Debug"
 		runtime "Debug"
 		symbols "On"
+        buildoptions "/MDd"
 
 	filter "configurations:Release"
 		runtime "Release"
         optimize "On"
+        buildoptions "/MT"
