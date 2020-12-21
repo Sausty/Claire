@@ -111,6 +111,7 @@ void DX11Context::OnWindowResize(uint32_t width, uint32_t height)
 void DX11Context::ClearColor(float r, float g, float b, float a)
 {
 	m_RendererContext->SetClearColor(m_RendererSwapChain, r, g, b, a);
+	m_Context->ClearDepthStencilView(m_RendererSwapChain->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1, 0);
 }
 
 void DX11Context::DrawIndexed(UINT count)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Claire/Maths/vectors/tvec2.h"
+#include <glm/glm.hpp>
 #include <unordered_map>
 
 namespace ClaireInput
@@ -13,7 +13,7 @@ namespace ClaireInput
 
 		float GetMousePositionX();
 		float GetMousePositionY();
-		ClaireMath::vec2 GetMousePosition();
+		glm::vec2 GetMousePosition();
 	
 		std::unordered_map<uint32_t, bool> buttons;
 	};

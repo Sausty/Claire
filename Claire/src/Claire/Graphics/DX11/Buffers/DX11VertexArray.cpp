@@ -8,7 +8,10 @@ void DX11VertexArray::Release()
 		i->Release();
 	}
 
-	ib->Release();
+	if (ib)
+	{
+		ib->Release();
+	}
 }
 
 void DX11VertexArray::AddVertexBuffer(DX11VertexBuffer* buffer)

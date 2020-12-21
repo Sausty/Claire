@@ -13,7 +13,7 @@ namespace ClaireInput
 
 		static float GetMousePositionX() { return m_Mouse.GetMousePositionX(); }
 		static float GetMousePositionY() { return m_Mouse.GetMousePositionY(); }
-		static ClaireMath::vec2 GetMousePosition() { return m_Mouse.GetMousePosition(); }
+		static glm::vec2 GetMousePosition() { return m_Mouse.GetMousePosition(); }
 
 		static bool IsMouseButtonPressed(uint32_t button) { return m_Mouse.IsMouseButtonPressed(button); }
 		static bool IsMouseButtonReleased(uint32_t button) { return m_Mouse.IsMouseButtonReleased(button); }

@@ -74,7 +74,7 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 
 	depthstencildesc.DepthEnable = true;
 	depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
+	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
 
 	result = device->CreateDepthStencilState(&depthstencildesc, &m_DepthStencilState);
 	if (FAILED(result))
@@ -99,7 +99,7 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sampDesc.MinLOD = 0;
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	result = device->CreateSamplerState(&sampDesc, &m_SamplerState); //Create sampler state

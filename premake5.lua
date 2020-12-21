@@ -1,6 +1,6 @@
 workspace "Claire"
     architecture "x64"
-    startproject "SandboxDX12"
+    startproject "Sandbox"
 
     configurations
     {
@@ -47,7 +47,8 @@ project "Claire"
         "%{prj.name}/src",
         "ext/glm",
         "third_party/DirectXTex/include",
-        "third_party/imgui"
+        "third_party/imgui",
+        "third_party/glm"
     }
 
     links
@@ -98,7 +99,8 @@ project "Sandbox"
     {
         "Claire/src",
         "ext/glm",
-        "third_party/imgui"
+        "third_party/imgui",
+        "third_party/glm"
     }
 
     links
@@ -147,7 +149,8 @@ project "SandboxDX12"
     {
         "Claire/src",
         "ext/glm",
-        "third_party/imgui"
+        "third_party/imgui",
+        "third_party/glm"
     }
 
     links

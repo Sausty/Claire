@@ -30,11 +30,11 @@ namespace ClaireInput
 		return current_mouse_pos.y;
 	}
 
-	ClaireMath::vec2 Mouse::GetMousePosition()
+	glm::vec2 Mouse::GetMousePosition()
 	{
 		POINT current_mouse_pos = {};
 		::GetCursorPos(&current_mouse_pos);
 
-		return ClaireMath::vec2(current_mouse_pos.x, current_mouse_pos.y);
+		return glm::vec2(current_mouse_pos.x, current_mouse_pos.y);
 	}
 }
