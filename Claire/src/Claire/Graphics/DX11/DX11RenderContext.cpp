@@ -1,17 +1,17 @@
 #include "DX11RenderContext.h"
 #include "DX11SwapChain.h"
 
-RenderContext::RenderContext(ID3D11DeviceContext* context)
+DX11RenderContext::DX11RenderContext(ID3D11DeviceContext* context)
 	: m_DeviceContext(context)
 {
 }
 
-void RenderContext::SetViewport(const Viewport& viewport)
+void DX11RenderContext::SetViewport(const DX11Viewport& viewport)
 {
 	m_DeviceContext->RSSetViewports(1, &viewport.GetViewport());
 }
 
-void RenderContext::SetClearColor(SwapChain* swapChain, float r, float g, float b, float a)
+void DX11RenderContext::SetClearColor(DX11SwapChain* swapChain, float r, float g, float b, float a)
 {
 	float ClearColorValues[] = { r, g, b, a };
 	m_DeviceContext->ClearRenderTargetView(swapChain->GetRenderTargetView(), ClearColorValues);
@@ -21,7 +21,7 @@ void RenderContext::SetClearColor(SwapChain* swapChain, float r, float g, float 
 	m_DeviceContext->OMSetDepthStencilState(swapChain->GetDepthStencilState(), 0);
 }
 
-void RenderContext::Release()
+void DX11RenderContext::Release()
 {
 	m_DeviceContext->Release();
 	delete this;

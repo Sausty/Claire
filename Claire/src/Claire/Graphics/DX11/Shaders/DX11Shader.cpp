@@ -5,14 +5,14 @@
 #include <d3dcompiler.h>
 #include <iostream>
 
-const Shader* Shader::s_CurrentlyBound = nullptr;
+const DX11Shader* DX11Shader::s_CurrentlyBound = nullptr;
 
-Shader::Shader(const std::string& source)
+DX11Shader::DX11Shader(const std::string& source)
 {
 	Load(source);
 }
 
-void Shader::Release()
+void DX11Shader::Release()
 {
 	for (int i = 0; i < m_Buffers.size(); i++)
 		m_Buffers[i]->Release();
@@ -21,37 +21,37 @@ void Shader::Release()
 	m_Data.FragmentShader->Release();
 }
 
-void Shader::Bind()
+void DX11Shader::Bind()
 {
 	s_CurrentlyBound = this;
 
-	Context::Get().GetDeviceContext()->VSSetShader(m_Data.VertexShader, NULL, 0);
-	Context::Get().GetDeviceContext()->PSSetShader(m_Data.FragmentShader, NULL, 0);
+	DX11Context::Get().GetDeviceContext()->VSSetShader(m_Data.VertexShader, NULL, 0);
+	DX11Context::Get().GetDeviceContext()->PSSetShader(m_Data.FragmentShader, NULL, 0);
 
 	for (int i = 0; i < m_Buffers.size(); i++)
 		m_Buffers[i]->BindForShader(i);
 }
 
-void Shader::UpdateUniforms() const
+void DX11Shader::UpdateUniforms() const
 {
 	
 }
 
-void Shader::Unbind() const
+void DX11Shader::Unbind() const
 {
 	s_CurrentlyBound = nullptr;
 
-	Context::Get().GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
-	Context::Get().GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
+	DX11Context::Get().GetDeviceContext()->VSSetShader(nullptr, NULL, 0);
+	DX11Context::Get().GetDeviceContext()->PSSetShader(nullptr, NULL, 0);
 }
 
-void Shader::AddConstantBuffer(ConstantBuffer* buff)
+void DX11Shader::AddConstantBuffer(DX11ConstantBuffer* buff)
 {
 	m_Buffers.push_back(buff);
 	m_ExpectedSize++;
 }
 
-ID3DBlob* Shader::Compile(const std::string& source, const std::string& profile, const std::string& main, ShaderErrorInfo& info)
+ID3DBlob* DX11Shader::Compile(const std::string& source, const std::string& profile, const std::string& main, ShaderErrorInfo& info)
 {
 	ID3DBlob* shaderBlob;
 	ID3DBlob* errorBlob;
@@ -70,21 +70,21 @@ ID3DBlob* Shader::Compile(const std::string& source, const std::string& profile,
 	return nullptr;
 }
 
-void Shader::Load(const std::string& source)
+void DX11Shader::Load(const std::string& source)
 {
 	ShaderErrorInfo info;
 	m_Data.VertexBlob = Compile(source, "vs_5_0", "VSMain", info);
 	m_Data.FragmentBlob = Compile(source, "ps_5_0", "PSMain", info);
-	Context::Get().GetDevice()->CreateVertexShader(m_Data.VertexBlob->GetBufferPointer(), m_Data.VertexBlob->GetBufferSize(), NULL, &m_Data.VertexShader);
-	Context::Get().GetDevice()->CreatePixelShader(m_Data.FragmentBlob->GetBufferPointer(), m_Data.FragmentBlob->GetBufferSize(), NULL, &m_Data.FragmentShader);
+	DX11Context::Get().GetDevice()->CreateVertexShader(m_Data.VertexBlob->GetBufferPointer(), m_Data.VertexBlob->GetBufferSize(), NULL, &m_Data.VertexShader);
+	DX11Context::Get().GetDevice()->CreatePixelShader(m_Data.FragmentBlob->GetBufferPointer(), m_Data.FragmentBlob->GetBufferSize(), NULL, &m_Data.FragmentShader);
 }
 
-std::string Shader::RemoveComments(const std::string& source)
+std::string DX11Shader::RemoveComments(const std::string& source)
 {
 	return std::string();
 }
 
-bool Shader::TryCompile(const std::string& source, std::string& error)
+bool DX11Shader::TryCompile(const std::string& source, std::string& error)
 {
 	ShaderErrorInfo info;
 
@@ -102,7 +102,7 @@ bool Shader::TryCompile(const std::string& source, std::string& error)
 	return true;
 }
 
-bool Shader::TryCompileFromFile(const std::string& filepath, std::string& error)
+bool DX11Shader::TryCompileFromFile(const std::string& filepath, std::string& error)
 {
 	std::string source = ReadFile(filepath);
 	return TryCompile(source, error);

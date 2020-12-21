@@ -3,7 +3,7 @@
 #include "Claire/Core/DX11Assert.h"
 #include "Claire/Graphics/DX11/DX11Context.h"
 
-IndexBuffer::IndexBuffer(uint32_t* data, uint32_t count)
+DX11IndexBuffer::DX11IndexBuffer(uint32_t* data, uint32_t count)
 	: m_Count(count)
 {
 	D3D11_BUFFER_DESC ibd;
@@ -17,25 +17,25 @@ IndexBuffer::IndexBuffer(uint32_t* data, uint32_t count)
 	D3D11_SUBRESOURCE_DATA ibInitData;
 	ibInitData.pSysMem = data;
 
-	GraphicsAssert(Context::Get().GetDevice()->CreateBuffer(&ibd, &ibInitData, &m_Handle));
+	GraphicsAssert(DX11Context::Get().GetDevice()->CreateBuffer(&ibd, &ibInitData, &m_Handle));
 }
 
-void IndexBuffer::Release()
+void DX11IndexBuffer::Release()
 {
 	m_Handle->Release();
 	delete this;
 }
 
-void IndexBuffer::Bind() const
+void DX11IndexBuffer::Bind() const
 {
-	Context::Get().GetDeviceContext()->IASetIndexBuffer(m_Handle, DXGI_FORMAT_R32_UINT, 0);
+	DX11Context::Get().GetDeviceContext()->IASetIndexBuffer(m_Handle, DXGI_FORMAT_R32_UINT, 0);
 }
 
-void IndexBuffer::Unbind() const
+void DX11IndexBuffer::Unbind() const
 {
 }
 
-uint32_t IndexBuffer::GetCount() const
+uint32_t DX11IndexBuffer::GetCount() const
 {
 	return m_Count;
 }

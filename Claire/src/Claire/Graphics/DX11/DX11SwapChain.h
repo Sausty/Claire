@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <cstdint>
 
-class SwapChain
+class DX11SwapChain
 {
 public:
 	void Create(HWND hwnd, uint32_t width, uint32_t height);
@@ -27,5 +27,5 @@ private:
 	ID3D11RasterizerState* m_RasterizerState;
 	ID3D11SamplerState* m_SamplerState;
 	
-	friend class RenderContext;
+	friend class DX11RenderContext;
 };

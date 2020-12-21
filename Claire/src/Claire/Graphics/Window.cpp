@@ -2,8 +2,15 @@
 #include "Claire/Core/Input/InputManager.h"
 #include "Claire/Core/Input/MouseCodes.h"
 #include <imgui.h>
-#include <examples/imgui_impl_dx11.h>
+
 #include <examples/imgui_impl_win32.h>
+
+#include "DX11/View/DX11Viewport.h"
+#include "DX11/DX11Context.h"
+#include "DX12/View/DX12Viewport.h"
+#include "DX12/DX12Context.h"
+#include <examples/imgui_impl_dx11.h>
+#include <examples/imgui_impl_dx12.h>
 
 Window* WindowPointer = nullptr;
 
@@ -86,27 +93,37 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	return NULL;
 }
 
-Window::Window(const Viewport& viewport, LPCWSTR title)
-	: m_Width(viewport.GetViewport().Width), m_Height(viewport.GetViewport().Height), m_Title(title)
-{
-	if (!Create())
-		__debugbreak();
-
-	Context::Get().Init(*this);
-}
-
-Window::Window(uint32_t width, uint32_t height, LPCWSTR title)
+Window::Window(uint32_t width, uint32_t height, LPCWSTR title, API api)
 	: m_Width(width), m_Height(height), m_Title(title)
 {
+	curApi = api;
+
 	if (!Create())
 		__debugbreak();
 
-	Context::Get().Init(*this);
+	switch (curApi)
+	{
+	case API::DirectX11:
+		DX11Context::Get().Init(*this);
+		break;
+	case API::DirectX12:
+		DX12Context::Get().Init(m_Handle);
+		break;
+	}
 }
 
 Window::~Window()
 {
-	Context::Get().Shutdown();
+	switch (curApi)
+	{
+	case API::DirectX11:
+		DX11Context::Get().Shutdown();
+		break;
+	case API::DirectX12:
+		DX12Context::Get().Shutdown();
+		break;
+	}
+
 	DestroyWindow(m_Handle);
 }
 
@@ -131,17 +148,32 @@ RECT Window::GetWindowFramebufferSize()
 
 void Window::Clear()
 {
-	Context::Get().GetRendererSwapChain()->Present();
+	switch (curApi)
+	{
+	case API::DirectX11:
+		DX11Context::Get().GetRendererSwapChain()->Present();
+		break;
+	}
 }
 
 void Window::ClearColor(float r, float g, float b, float a)
 {
-	Context::Get().ClearColor(r, g, b, a);
+	switch (curApi)
+	{
+	case API::DirectX11:
+		DX11Context::Get().ClearColor(r, g, b, a);
+		break;
+	}
 }
 
 void Window::StartImGui()
 {
-	ImGui_ImplDX11_NewFrame();
+	switch (curApi)
+	{
+	case API::DirectX11:
+		ImGui_ImplDX11_NewFrame();
+		break;
+	}
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
@@ -154,8 +186,14 @@ void Window::StopImGui()
 		io.DisplaySize = ImVec2((float)m_Width, (float)m_Height);
 
 		ImGui::Render();
-		Context::Get().GetRendererSwapChain()->RecreateRenderTargetView(m_Width, m_Height);
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		switch (curApi)
+		{
+		case API::DirectX11:
+			DX11Context::Get().GetRendererSwapChain()->RecreateRenderTargetView(m_Width, m_Height);
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			break;
+		}
 
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{

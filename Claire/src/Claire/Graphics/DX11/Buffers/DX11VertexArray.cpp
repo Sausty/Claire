@@ -1,7 +1,7 @@
 #include "DX11VertexArray.h"
 #include "Claire/Graphics/DX11/DX11Context.h"
 
-void VertexArray::Release()
+void DX11VertexArray::Release()
 {
 	for (auto i : m_VertexBuffers)
 	{
@@ -11,28 +11,28 @@ void VertexArray::Release()
 	ib->Release();
 }
 
-void VertexArray::AddVertexBuffer(VertexBuffer* buffer)
+void DX11VertexArray::AddVertexBuffer(DX11VertexBuffer* buffer)
 {
 	m_VertexBuffers.push_back(buffer);
 }
 
-void VertexArray::SetIndexBuffer(IndexBuffer* buffer)
+void DX11VertexArray::SetIndexBuffer(DX11IndexBuffer* buffer)
 {
 	ib = buffer;
 }
 
-void VertexArray::DrawArrays()
+void DX11VertexArray::DrawArrays()
 {
 	for (auto i : m_VertexBuffers)
 	{
-		Context::Get().DrawArrays(i->GetVerticesSize(), 0, DrawMode::TriangleStrip);
+		DX11Context::Get().DrawArrays(i->GetVerticesSize(), 0, DrawMode::TriangleStrip);
 	}
 }
 
-void VertexArray::DrawElements()
+void DX11VertexArray::DrawElements()
 {
 	for (auto i : m_VertexBuffers)
 		i->Bind();
 	ib->Bind();
-	Context::Get().DrawIndexed(ib->GetCount());
+	DX11Context::Get().DrawIndexed(ib->GetCount());
 }

@@ -1,6 +1,6 @@
 workspace "Claire"
     architecture "x64"
-    startproject "Sandbox"
+    startproject "SandboxDX12"
 
     configurations
     {
@@ -31,13 +31,15 @@ project "Claire"
         "%{prj.name}/src/**.c",
         "third_party/imgui/examples/imgui_impl_dx11.h",
         "third_party/imgui/examples/imgui_impl_dx11.cpp",
+        "third_party/imgui/examples/imgui_impl_dx12.h",
+        "third_party/imgui/examples/imgui_impl_dx12.cpp",
         "third_party/imgui/examples/imgui_impl_win32.h",
-        "third_party/imgui/examples/imgui_impl_win32.cpp"
+        "third_party/imgui/examples/imgui_impl_win32.cpp",
     }
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS",
     }
 
     includedirs
@@ -51,9 +53,11 @@ project "Claire"
     links
     {
         "d3d11",
+        "d3d12",
         "d3dcompiler",
         "ole32",
-        "ImGui"
+        "ImGui",
+        "dxgi"
     }
 
     filter "system:windows"
@@ -103,6 +107,11 @@ project "Sandbox"
         "ImGui"
     }
 
+    defines
+    {
+        "CLAIRE_VERSION_11"
+    }
+
     filter "system:windows"
         systemversion "latest"
 
@@ -116,3 +125,51 @@ project "Sandbox"
         optimize "On"
         buildoptions "/MT"
 
+project "SandboxDX12"
+    location "SandboxDX12"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17" -- still in 2020
+    staticruntime "On"
+
+    targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/src/**.hpp",
+        "%{prj.name}/src/**.c"
+    }
+
+    includedirs
+    {
+        "Claire/src",
+        "ext/glm",
+        "third_party/imgui"
+    }
+
+    links
+    {
+        "Claire",
+        "ImGui"
+    }
+
+    defines
+    {
+        "CLAIRE_VERSION_12"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+    filter "configurations:Debug"
+		runtime "Debug"
+		symbols "On"
+        buildoptions "/MDd"
+
+	filter "configurations:Release"
+		runtime "Release"
+        optimize "On"
+        buildoptions "/MT"

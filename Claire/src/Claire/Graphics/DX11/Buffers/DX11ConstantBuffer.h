@@ -3,10 +3,10 @@
 #include <d3d11.h>
 #include <cstdint>
 
-class ConstantBuffer
+class DX11ConstantBuffer
 {
 public:
-	ConstantBuffer(void* data, uint32_t size);
+	DX11ConstantBuffer(void* data, uint32_t size);
 	void Release();
 
 	void BindForShader(int bufferIndex);

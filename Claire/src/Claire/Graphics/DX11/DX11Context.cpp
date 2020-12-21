@@ -10,7 +10,7 @@
 #include <examples/imgui_impl_dx11.h>
 #include <examples/imgui_impl_win32.h>
 
-void Context::Init(const Window& window)
+void DX11Context::Init(const Window& window)
 {
 	ImGui_ImplWin32_EnableDpiAwareness();
 
@@ -45,13 +45,13 @@ void Context::Init(const Window& window)
 		__debugbreak();
 	}
 
-	m_RendererContext = new RenderContext(m_Context);
+	m_RendererContext = new DX11RenderContext(m_Context);
 
 	m_Device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_DXGIDevice);
 	m_DXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void**)&m_DXGIAdapter);
 	m_DXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&m_DXGIFactory);
 
-	m_RendererSwapChain = new SwapChain();
+	m_RendererSwapChain = new DX11SwapChain();
 	m_RendererSwapChain->Create(m_WindowHandle, window.GetWidth(), window.GetHeight());
 
 	auto hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
@@ -81,7 +81,7 @@ void Context::Init(const Window& window)
 	ImGui_ImplDX11_Init(m_Device, m_Context);
 }
 
-void Context::Shutdown()
+void DX11Context::Shutdown()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -97,29 +97,29 @@ void Context::Shutdown()
 	m_Device->Release();
 }
 
-Context& Context::Get()
+DX11Context& DX11Context::Get()
 {
-	static Context context;
+	static DX11Context context;
 	return context;
 }
 
-void Context::OnWindowResize(uint32_t width, uint32_t height)
+void DX11Context::OnWindowResize(uint32_t width, uint32_t height)
 {
 	m_RendererSwapChain->RecreateRenderTargetView(width, height);
 }
 
-void Context::ClearColor(float r, float g, float b, float a)
+void DX11Context::ClearColor(float r, float g, float b, float a)
 {
 	m_RendererContext->SetClearColor(m_RendererSwapChain, r, g, b, a);
 }
 
-void Context::DrawIndexed(UINT count)
+void DX11Context::DrawIndexed(UINT count)
 {
 	m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	m_Context->DrawIndexed(count, 0, 0);
 }
 
-void Context::DrawArrays(UINT vertexCount, UINT startVertexCount, DrawMode mode)
+void DX11Context::DrawArrays(UINT vertexCount, UINT startVertexCount, DrawMode mode)
 {
 	m_Context->IASetPrimitiveTopology((D3D11_PRIMITIVE_TOPOLOGY)mode);
 	m_Context->Draw(vertexCount, startVertexCount);

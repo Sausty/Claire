@@ -4,25 +4,25 @@
 #include "Claire/Graphics/DX11/DX11Context.h"
 #include "Claire/Graphics/DX11/Shaders/DX11Shader.h"
 
-VertexBuffer::VertexBuffer()
+DX11VertexBuffer::DX11VertexBuffer()
 {
 	
 }
 
-void VertexBuffer::Release()
+void DX11VertexBuffer::Release()
 {
 	m_Buffer->Release();
 	m_Layout.GetNativeInputLayout()->Release();
 	delete this;
 }
 
-void VertexBuffer::SetLayout(const BufferLayout& layout)
+void DX11VertexBuffer::SetLayout(const DX11BufferLayout& layout)
 {
 	m_Layout = layout;
 	m_Layout.CalculateInputLayout();
 }
 
-void VertexBuffer::Create(void* vertices, uint32_t vertexSize, uint32_t listSize)
+void DX11VertexBuffer::Create(void* vertices, uint32_t vertexSize, uint32_t listSize)
 {
 	m_VertexSize = vertexSize; 
 	m_VerticesSize = listSize;
@@ -37,18 +37,18 @@ void VertexBuffer::Create(void* vertices, uint32_t vertexSize, uint32_t listSize
 	D3D11_SUBRESOURCE_DATA init_data = {};
 	init_data.pSysMem = vertices;
 
-	GraphicsAssert(Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_Buffer));
+	GraphicsAssert(DX11Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_Buffer));
 }
 
-void VertexBuffer::Bind()
+void DX11VertexBuffer::Bind()
 {
 	UINT stride = m_VertexSize;
 	UINT offset = 0;
-	Context::Get().GetDeviceContext()->IASetVertexBuffers(0, 1, &m_Buffer, &stride, &offset);
-	Context::Get().GetDeviceContext()->IASetInputLayout(m_Layout.GetNativeInputLayout());
+	DX11Context::Get().GetDeviceContext()->IASetVertexBuffers(0, 1, &m_Buffer, &stride, &offset);
+	DX11Context::Get().GetDeviceContext()->IASetInputLayout(m_Layout.GetNativeInputLayout());
 }
 
-void VertexBuffer::Unbind()
+void DX11VertexBuffer::Unbind()
 {
 
 }

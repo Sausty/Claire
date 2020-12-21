@@ -4,13 +4,13 @@
 #include <cstdint>
 #include "DX11BufferLayout.h"
 
-class VertexBuffer
+class DX11VertexBuffer
 {
 public:
-	VertexBuffer();
+	DX11VertexBuffer();
 	void Release();
 
-	void SetLayout(const BufferLayout& layout);
+	void SetLayout(const DX11BufferLayout& layout);
 	void Create(void* vertices, uint32_t vertexSize, uint32_t listSize);
 
 	uint32_t GetVertexSize() const { return m_VertexSize; }
@@ -23,7 +23,7 @@ private:
 	uint32_t m_VerticesSize;
 private:
 	ID3D11Buffer* m_Buffer;
-	BufferLayout m_Layout;
+	DX11BufferLayout m_Layout;
 private:
 	friend class RenderContext;
 };

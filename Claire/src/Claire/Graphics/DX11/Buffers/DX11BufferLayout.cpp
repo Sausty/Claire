@@ -33,7 +33,7 @@ static DXGI_FORMAT ClaireToDXGI(LayoutType type)
 	}
 };
 
-void BufferLayout::CalculateInputLayout()
+void DX11BufferLayout::CalculateInputLayout()
 {
 	D3D11_INPUT_ELEMENT_DESC* desc = new D3D11_INPUT_ELEMENT_DESC[m_Layout.size()];
 
@@ -43,7 +43,7 @@ void BufferLayout::CalculateInputLayout()
 		desc[i] = { elem.Name.c_str(), elem.SemanticIndex, ClaireToDXGI(elem.Format), elem.InputSlot, GetByteOffset(m_Layout, i), D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
-	const Shader* shader = Shader::CurrentlyBound();
-	GraphicsAssert(Context::Get().GetDevice()->CreateInputLayout(desc, m_Layout.size(), shader->GetData().VertexBlob->GetBufferPointer(), shader->GetData().VertexBlob->GetBufferSize(), &m_InputLayout));
+	const DX11Shader* shader = DX11Shader::CurrentlyBound();
+	GraphicsAssert(DX11Context::Get().GetDevice()->CreateInputLayout(desc, m_Layout.size(), shader->GetData().VertexBlob->GetBufferPointer(), shader->GetData().VertexBlob->GetBufferSize(), &m_InputLayout));
 	delete desc;
 }

@@ -3,9 +3,9 @@
 
 #include "Claire/Graphics/Window.h"
 
-void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
+void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 {
-	auto device = Context::Get().GetDevice();
+	auto device = DX11Context::Get().GetDevice();
 
 	DXGI_SWAP_CHAIN_DESC swapChainInfo;
 	ZeroMemory(&swapChainInfo, sizeof(swapChainInfo));
@@ -21,7 +21,7 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	swapChainInfo.SampleDesc.Quality = 0;
 	swapChainInfo.Windowed = TRUE;
 
-	HRESULT result = Context::Get().GetDXGIFactory()->CreateSwapChain(device, &swapChainInfo, &m_Handle);
+	HRESULT result = DX11Context::Get().GetDXGIFactory()->CreateSwapChain(device, &swapChainInfo, &m_Handle);
 
 	if (FAILED(result))
 	{
@@ -108,7 +108,7 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 		__debugbreak();
 	}
 
-	Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+	DX11Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
 
 	D3D11_VIEWPORT vp;
 	vp.Width = (FLOAT)width;
@@ -117,10 +117,10 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
+	DX11Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
 }
 
-void SwapChain::Release()
+void DX11SwapChain::Release()
 {
 	m_SamplerState->Release();
 	m_RasterizerState->Release(); 
@@ -132,16 +132,16 @@ void SwapChain::Release()
 	delete this;
 }
 
-void SwapChain::Present()
+void DX11SwapChain::Present()
 {
 	m_Handle->Present(1, 0);
 }
 
-void SwapChain::RecreateRenderTargetView(uint32_t width, uint32_t height)
+void DX11SwapChain::RecreateRenderTargetView(uint32_t width, uint32_t height)
 {
 	if (m_Handle != nullptr)
 	{
-		Context::Get().GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+		DX11Context::Get().GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
 		m_RenderTargetView->Release();
 
 		HRESULT hr;
@@ -158,10 +158,10 @@ void SwapChain::RecreateRenderTargetView(uint32_t width, uint32_t height)
 			__debugbreak();
 		}
 
-		hr = Context::Get().GetDevice()->CreateRenderTargetView(buffer, NULL, &m_RenderTargetView);
+		hr = DX11Context::Get().GetDevice()->CreateRenderTargetView(buffer, NULL, &m_RenderTargetView);
 		buffer->Release();
 
-		Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+		DX11Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
 
 		D3D11_VIEWPORT vp;
 		vp.Width = width;
@@ -170,6 +170,6 @@ void SwapChain::RecreateRenderTargetView(uint32_t width, uint32_t height)
 		vp.MaxDepth = 1.0f;
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
-		Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
+		DX11Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
 	}
 }

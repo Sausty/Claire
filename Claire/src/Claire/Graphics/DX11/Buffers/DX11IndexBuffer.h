@@ -3,10 +3,10 @@
 #include <d3d11.h>
 #include <cstdint>
 
-class IndexBuffer
+class DX11IndexBuffer
 {
 public:
-	IndexBuffer(uint32_t* data, uint32_t count);
+	DX11IndexBuffer(uint32_t* data, uint32_t count);
 	void Release();
 
 	void Bind() const;

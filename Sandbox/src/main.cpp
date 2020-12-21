@@ -1,4 +1,3 @@
-#define CLAIRE_VERSION_11
 #include <Claire/Claire.h>
 #include <iostream>
 
@@ -21,15 +20,14 @@ int main()
 
 	vertex list[] =
 	{
-		vec3( 0.5f, 0.5f, 0.0f), vec3(1, 0, 0), vec2(1.0, 1.0),
-		vec3( 0.5f,-0.5f, 0.0f), vec3(0, 1, 0), vec2(1.0, 0.0),
-		vec3(-0.5f,-0.5f, 0.0f), vec3(0, 0, 1), vec2(0.0, 0.0),
-		vec3(-0.5f, 0.5f, 0.0f), vec3(1, 1, 0), vec2(0.0, 1.0)
+		vec3( 0.5f, 0.5f, 0.0f), vec3(1, 0, 0), vec2(0.0, 0.0),
+		vec3( 0.5f,-0.5f, 0.0f), vec3(0, 1, 0), vec2(0.0, 1.0),
+		vec3(-0.5f,-0.5f, 0.0f), vec3(0, 0, 1), vec2(1.0, 1.0),
+		vec3(-0.5f, 0.5f, 0.0f), vec3(1, 1, 0), vec2(1.0, 0.0)
 	};
 	uint32_t listSize = ARRAYSIZE(list);
 
-	Viewport viewport(1280, 720);
-	Window window(viewport, L"My Window");
+	Window window(1280, 720, L"My Window", API::DirectX11);
 
 	Shader* shader = new Shader(ReadFile("Shaders/HelloTriangle/HelloTriangle.hlsl"));
 	shader->Bind();
@@ -67,7 +65,7 @@ int main()
 	{
 		window.Update();
 		window.ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		Context::Get().GetRendererContext()->SetViewport(viewport);
+		Context::Get().GetRendererContext()->SetViewport(Viewport(1280, 720));
 
 		{
 			shader->Bind();

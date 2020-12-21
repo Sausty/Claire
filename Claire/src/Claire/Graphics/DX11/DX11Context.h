@@ -17,13 +17,13 @@ enum class DrawMode
 	TriangleStrip = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
 };
 
-class Context
+class DX11Context
 {
 public:
 	void Init(const Window& window);
 	void Shutdown();
 
-	static Context& Get();
+	static DX11Context& Get();
 
 	ID3D11Device* GetDevice() { return m_Device; }
 	ID3D11DeviceContext* GetDeviceContext() { return m_Context; }
@@ -35,8 +35,8 @@ public:
 	void OnWindowResize(uint32_t width, uint32_t height);
 
 	void RecreateSwapChain(HWND hwnd, uint32_t width, uint32_t height) { m_RendererSwapChain->Create(hwnd, width, height); }
-	SwapChain* GetRendererSwapChain() { return m_RendererSwapChain; }
-	RenderContext* GetRendererContext() const { return m_RendererContext; }
+	DX11SwapChain* GetRendererSwapChain() { return m_RendererSwapChain; }
+	DX11RenderContext* GetRendererContext() const { return m_RendererContext; }
 
 	void ClearColor(float r, float g, float b, float a);
 	void DrawIndexed(UINT count);
@@ -51,8 +51,8 @@ private:
 	IDXGIAdapter* m_DXGIAdapter;
 	IDXGIFactory* m_DXGIFactory;
 private:
-	SwapChain* m_RendererSwapChain;
-	RenderContext* m_RendererContext;
+	DX11SwapChain* m_RendererSwapChain;
+	DX11RenderContext* m_RendererContext;
 private:
 	friend class SwapChain;
 };

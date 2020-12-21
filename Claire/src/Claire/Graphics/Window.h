@@ -2,14 +2,19 @@
 
 #include <Windows.h>
 #include <cstdint>
-#include "DX11/DX11Context.h"
-#include "DX11/View/DX11Viewport.h"
+
+enum class API
+{
+	DirectX11,
+	DirectX12
+};
+
+static API curApi;
 
 class Window
 {
 public:
-	Window(const Viewport& viewport, LPCWSTR title);
-	Window(uint32_t width, uint32_t height, LPCWSTR title);
+	Window(uint32_t width, uint32_t height, LPCWSTR title, API api);
 	~Window();
 
 	bool Create();

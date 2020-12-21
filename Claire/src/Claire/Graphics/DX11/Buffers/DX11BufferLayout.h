@@ -39,12 +39,12 @@ struct BufferElement
 	}
 };
 
-class BufferLayout final
+class DX11BufferLayout
 {
 public:
-	BufferLayout() {}
+	DX11BufferLayout() {}
 
-	BufferLayout(std::initializer_list<BufferElement> elements)
+	DX11BufferLayout(std::initializer_list<BufferElement> elements)
 		: m_Layout(elements) {}
 
 	void CalculateInputLayout();

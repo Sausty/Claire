@@ -40,10 +40,10 @@ static std::string ReadFile(const std::string& filepath)
 	return result;
 }
 
-class Shader
+class DX11Shader
 {
 private:
-	static const Shader* s_CurrentlyBound;
+	static const DX11Shader* s_CurrentlyBound;
 
 	struct Data
 	{
@@ -57,7 +57,7 @@ private:
 	mutable Data m_Data;
 
 public:
-	Shader(const std::string& source);
+	DX11Shader(const std::string& source);
 	void Release();
 
 	inline Data& GetData() const { return m_Data; }
@@ -66,18 +66,18 @@ public:
 	void UpdateUniforms() const;
 	void Unbind() const;
 
-	void AddConstantBuffer(ConstantBuffer* buff);
+	void AddConstantBuffer(DX11ConstantBuffer* buff);
 private:
 	static ID3DBlob* Compile(const std::string& source, const std::string& profile, const std::string& main, ShaderErrorInfo& info);
 	void Load(const std::string& source);
 
 	std::string RemoveComments(const std::string& source);
 
-	std::vector<ConstantBuffer*> m_Buffers;
+	std::vector<DX11ConstantBuffer*> m_Buffers;
 	int m_ExpectedSize = 0;
 public:
 	static bool TryCompile(const std::string& source, std::string& error);
 	static bool TryCompileFromFile(const std::string& filepath, std::string& error);
 	
-	static const Shader* CurrentlyBound() { return s_CurrentlyBound; }
+	static const DX11Shader* CurrentlyBound() { return s_CurrentlyBound; }
 };

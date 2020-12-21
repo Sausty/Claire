@@ -1,11 +1,11 @@
 #pragma once
 
-#include <d3d11.h>
+#include <d3d12.h>
 
-class DX11Viewport
+class DX12Viewport
 {
 public:
-	DX11Viewport(UINT width, UINT height)
+	DX12Viewport(UINT width, UINT height)
 		: m_Width(width), m_Height(height)
 	{
 		m_Viewport.Width = m_Width;
@@ -30,9 +30,9 @@ public:
 		return m_Width / m_Height;
 	}
 
-	D3D11_VIEWPORT GetViewport() const { return m_Viewport; }
+	D3D12_VIEWPORT GetViewport() const { return m_Viewport; }
 private:
 	UINT m_Width;
 	UINT m_Height;
-	D3D11_VIEWPORT m_Viewport = {};
-};
+	D3D12_VIEWPORT m_Viewport = {};
+}; 

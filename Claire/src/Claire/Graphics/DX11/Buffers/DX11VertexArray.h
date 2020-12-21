@@ -4,18 +4,18 @@
 #include "DX11IndexBuffer.h"
 #include <vector>
 
-class VertexArray
+class DX11VertexArray
 {
 public:
-	VertexArray() = default;
+	DX11VertexArray() = default;
 	void Release();
 
-	void AddVertexBuffer(VertexBuffer* buffer);
-	void SetIndexBuffer(IndexBuffer* buffer);
+	void AddVertexBuffer(DX11VertexBuffer* buffer);
+	void SetIndexBuffer(DX11IndexBuffer* buffer);
 
 	void DrawArrays();
 	void DrawElements();
 private:
-	IndexBuffer* ib;
-	std::vector<VertexBuffer*> m_VertexBuffers;
+	DX11IndexBuffer* ib;
+	std::vector<DX11VertexBuffer*> m_VertexBuffers;
 };

@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-ConstantBuffer::ConstantBuffer(void* data, uint32_t size)
+DX11ConstantBuffer::DX11ConstantBuffer(void* data, uint32_t size)
 {
 	D3D11_BUFFER_DESC buff_desc = {};
 	buff_desc.Usage = D3D11_USAGE_DEFAULT;
@@ -18,28 +18,28 @@ ConstantBuffer::ConstantBuffer(void* data, uint32_t size)
 	init_data.pSysMem = data;
 
 
-	GraphicsAssert(Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_BufferHandle))
+	GraphicsAssert(DX11Context::Get().GetDevice()->CreateBuffer(&buff_desc, &init_data, &m_BufferHandle))
 }
 
-void ConstantBuffer::Release()
+void DX11ConstantBuffer::Release()
 {
 	m_BufferHandle->Release();
 	delete this;
 }
 
-void ConstantBuffer::BindForShader(int bufferIndex)
+void DX11ConstantBuffer::BindForShader(int bufferIndex)
 {
-	Context::Get().GetDeviceContext()->VSSetConstantBuffers(bufferIndex, 1, &m_BufferHandle);
-	Context::Get().GetDeviceContext()->PSSetConstantBuffers(bufferIndex, 1, &m_BufferHandle);
+	DX11Context::Get().GetDeviceContext()->VSSetConstantBuffers(bufferIndex, 1, &m_BufferHandle);
+	DX11Context::Get().GetDeviceContext()->PSSetConstantBuffers(bufferIndex, 1, &m_BufferHandle);
 }
 
-void ConstantBuffer::Unbind()
+void DX11ConstantBuffer::Unbind()
 {
-	Context::Get().GetDeviceContext()->VSSetConstantBuffers(0, 1, nullptr);
-	Context::Get().GetDeviceContext()->PSSetConstantBuffers(0, 1, nullptr);
+	DX11Context::Get().GetDeviceContext()->VSSetConstantBuffers(0, 1, nullptr);
+	DX11Context::Get().GetDeviceContext()->PSSetConstantBuffers(0, 1, nullptr);
 }
 
-void ConstantBuffer::Update(void* data)
+void DX11ConstantBuffer::Update(void* data)
 {
-	Context::Get().GetDeviceContext()->UpdateSubresource(m_BufferHandle, NULL, NULL, data, NULL, NULL);
+	DX11Context::Get().GetDeviceContext()->UpdateSubresource(m_BufferHandle, NULL, NULL, data, NULL, NULL);
 }

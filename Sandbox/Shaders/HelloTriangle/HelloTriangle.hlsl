@@ -2,14 +2,14 @@ struct VS_INPUT
 {
 	float4 position: POSITION;
 	float3 color: COLOR;
-	float2 texcoord: TEXCOORD0;
+	float2 texcoord: TEXCOORD;
 };
 
 struct VS_OUTPUT
 {
 	float4 position: SV_POSITION;
 	float3 color: COLOR;
-	float2 texcoord: TEXCOORD0;
+	float2 texcoord: TEXCOORD;
 };
 
 Texture2D Texture: register(t0);
@@ -19,7 +19,7 @@ struct PS_INPUT
 {
 	float4 position: SV_POSITION;
 	float3 color: COLOR;
-	float2 texcoord: TEXCOORD0;
+	float2 texcoord: TEXCOORD;
 };
 
 cbuffer constant : register(b0)
