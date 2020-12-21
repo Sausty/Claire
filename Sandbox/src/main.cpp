@@ -1,7 +1,9 @@
+#define CLAIRE_VERSION_11
 #include <Claire/Claire.h>
 #include <iostream>
 
 #include "SandboxCamera.h"
+#include <imgui.h>
 
 using namespace ClaireMath;
 using namespace ClaireInput;
@@ -59,27 +61,32 @@ int main()
 
 	shader->Unbind();
 
-	Texture2D tex(L"res/textures/container.png");
+	Texture2D tex(L"res/textures/companion.jpg");
 
 	while (window.IsOpen())
 	{
 		window.Update();
 		window.ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-
 		Context::Get().GetRendererContext()->SetViewport(viewport);
 
-		shader->Bind();
-		tex.Bind(0, shader);
+		{
+			shader->Bind();
+			tex.Bind(0, shader);
 
-		sbCamera.Update();
-		constantBuffer->BindForShader(0);
-		mat4 cam = sbCamera.GetViewProjectionMatrix();
-		constantBuffer->Update(&cam);
+			sbCamera.Update();
+			constantBuffer->BindForShader(0);
+			mat4 cam = sbCamera.GetViewProjectionMatrix();
+			constantBuffer->Update(&cam);
 
-		vao.DrawElements();
+			vao.DrawElements();
 
-		tex.Unbind();
-		shader->Unbind();
+			tex.Unbind();
+			shader->Unbind();
+		}
+
+		window.StartImGui();
+		ImGui::ShowDemoWindow();
+		window.StopImGui();
 
 		window.Clear();
 	}

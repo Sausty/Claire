@@ -9,7 +9,6 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 
 	DXGI_SWAP_CHAIN_DESC swapChainInfo;
 	ZeroMemory(&swapChainInfo, sizeof(swapChainInfo));
-
 	swapChainInfo.BufferCount = 1;
 	swapChainInfo.BufferDesc.Width = width;
 	swapChainInfo.BufferDesc.Height = height;
@@ -108,6 +107,17 @@ void SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	{
 		__debugbreak();
 	}
+
+	Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)width;
+	vp.Height = (FLOAT)height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
 }
 
 void SwapChain::Release()
@@ -117,11 +127,49 @@ void SwapChain::Release()
 	m_DepthStencilState->Release();
 	m_DepthStencilView->Release();
 	m_DepthStencilBuffer->Release();
+	m_RenderTargetView->Release();
 	m_Handle->Release();
 	delete this;
 }
 
 void SwapChain::Present()
 {
-	m_Handle->Present(false, NULL);
+	m_Handle->Present(1, 0);
+}
+
+void SwapChain::RecreateRenderTargetView(uint32_t width, uint32_t height)
+{
+	if (m_Handle != nullptr)
+	{
+		Context::Get().GetDeviceContext()->OMSetRenderTargets(0, 0, 0);
+		m_RenderTargetView->Release();
+
+		HRESULT hr;
+		hr = m_Handle->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+
+		if (FAILED(hr))
+			__debugbreak();
+
+		ID3D11Texture2D* buffer = NULL;
+		hr = m_Handle->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer);
+
+		if (FAILED(hr))
+		{
+			__debugbreak();
+		}
+
+		hr = Context::Get().GetDevice()->CreateRenderTargetView(buffer, NULL, &m_RenderTargetView);
+		buffer->Release();
+
+		Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+
+		D3D11_VIEWPORT vp;
+		vp.Width = width;
+		vp.Height = height;
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		Context::Get().GetDeviceContext()->RSSetViewports(1, &vp);
+	}
 }

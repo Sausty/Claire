@@ -28,6 +28,9 @@ public:
 
 	void Clear();
 	void ClearColor(float r, float g, float b, float a);
+
+	void StartImGui(); 
+	void StopImGui();
 private:
 	HWND m_Handle = nullptr;
 

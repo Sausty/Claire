@@ -6,9 +6,14 @@
 #include <DirectXTex.inl>
 #include <wrl.h>
 #include <stdexcept>
+#include <imgui.h>
+#include <examples/imgui_impl_dx11.h>
+#include <examples/imgui_impl_win32.h>
 
 void Context::Init(const Window& window)
 {
+	ImGui_ImplWin32_EnableDpiAwareness();
+
 	m_WindowHandle = window.GetNativeWindow();
 
 	D3D_DRIVER_TYPE driverTypes[] =
@@ -53,10 +58,35 @@ void Context::Init(const Window& window)
 	if (FAILED(hr)) {
 		throw std::runtime_error("COM Library is already initialized on this thread.");
 	}
+
+	// Setup ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;        
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   
+	io.ConfigFlags |= ImGuiConfigFlags_DpiEnableScaleViewports; 
+
+	ImGui::StyleColorsDark();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	ImGui_ImplWin32_Init(m_WindowHandle);
+	ImGui_ImplDX11_Init(m_Device, m_Context);
 }
 
 void Context::Shutdown()
 {
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
 	m_RendererSwapChain->Release();
 
 	m_DXGIDevice->Release();
@@ -75,12 +105,7 @@ Context& Context::Get()
 
 void Context::OnWindowResize(uint32_t width, uint32_t height)
 {
-	if (m_WindowHandle)
-	{
-		m_RendererSwapChain->Release();
-		m_RendererSwapChain = new SwapChain();
-		m_RendererSwapChain->Create(m_WindowHandle, width, height);
-	}
+	m_RendererSwapChain->RecreateRenderTargetView(width, height);
 }
 
 void Context::ClearColor(float r, float g, float b, float a)

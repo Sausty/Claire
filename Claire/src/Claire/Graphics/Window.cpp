@@ -1,11 +1,18 @@
 #include "Window.h"
 #include "Claire/Core/Input/InputManager.h"
 #include "Claire/Core/Input/MouseCodes.h"
+#include <imgui.h>
+#include <examples/imgui_impl_dx11.h>
+#include <examples/imgui_impl_win32.h>
 
 Window* WindowPointer = nullptr;
 
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WindowCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
+		return true;
+
 	switch (msg)
 	{
 	case WM_CREATE:
@@ -24,11 +31,6 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 			reinterpret_cast<Window* const>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 		window->Shutdown();
 		PostQuitMessage(0);
-		break;
-	}
-	
-	case WM_SIZE:
-	{
 		break;
 	}
 
@@ -65,6 +67,15 @@ LRESULT CALLBACK WindowCallback(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 	case WM_MBUTTONUP:
 	{
 		ClaireInput::InputManager::GetMouseHandle().buttons[ClaireInput::MouseButtons::ButtonMiddle] = false;
+		break;
+	}
+
+	case WM_DPICHANGED: {
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DpiEnableScaleViewports)
+		{
+			const RECT* suggested_rect = (RECT*)lParam;
+			::SetWindowPos(hwnd, NULL, suggested_rect->left, suggested_rect->top, suggested_rect->right - suggested_rect->left, suggested_rect->bottom - suggested_rect->top, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
 		break;
 	}
 
@@ -128,9 +139,39 @@ void Window::ClearColor(float r, float g, float b, float a)
 	Context::Get().ClearColor(r, g, b, a);
 }
 
+void Window::StartImGui()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Window::StopImGui()
+{
+	if (IsOpen())
+	{
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		io.DisplaySize = ImVec2((float)m_Width, (float)m_Height);
+
+		ImGui::Render();
+		Context::Get().GetRendererSwapChain()->RecreateRenderTargetView(m_Width, m_Height);
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+	}
+}
+
 bool Window::Create()
 {
+	DWORD dwStyle = WS_OVERLAPPED | WS_MINIMIZEBOX | WS_SYSMENU;
+	DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+
 	WNDCLASSEX wndClass{};
+	wndClass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 	wndClass.cbSize = sizeof(WNDCLASSEX);
 	wndClass.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -144,16 +185,18 @@ bool Window::Create()
 		return false;
 
 	RECT rect = { 0, 0, m_Width, m_Height };
-	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_OVERLAPPEDWINDOW);
+	AdjustWindowRectEx(&rect, dwStyle, FALSE, dwExStyle);
 
 	const auto width = rect.right - rect.left;
 	const auto height = rect.bottom - rect.top;
 
 	m_Handle = CreateWindowEx(
-		WS_EX_OVERLAPPEDWINDOW,
+		dwExStyle,
 		wndClass.lpszClassName,
 		wndClass.lpszClassName,
-		WS_OVERLAPPEDWINDOW,
+		dwStyle |                           // Defined Window Style
+		WS_CLIPSIBLINGS |                   // Required Window Style
+		WS_CLIPCHILDREN,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		width,

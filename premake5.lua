@@ -10,6 +10,10 @@ workspace "Claire"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+group "Dependencies"
+    include "third_party/imgui"
+group ""
+
 project "Claire"
     location "Claire"
     kind "StaticLib"
@@ -25,6 +29,10 @@ project "Claire"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/src/**.hpp",
         "%{prj.name}/src/**.c",
+        "third_party/imgui/examples/imgui_impl_dx11.h",
+        "third_party/imgui/examples/imgui_impl_dx11.cpp",
+        "third_party/imgui/examples/imgui_impl_win32.h",
+        "third_party/imgui/examples/imgui_impl_win32.cpp"
     }
 
     defines
@@ -36,14 +44,16 @@ project "Claire"
     {
         "%{prj.name}/src",
         "ext/glm",
-        "third_party/DirectXTex/include"
+        "third_party/DirectXTex/include",
+        "third_party/imgui"
     }
 
     links
     {
         "d3d11",
         "d3dcompiler",
-        "ole32"
+        "ole32",
+        "ImGui"
     }
 
     filter "system:windows"
@@ -83,12 +93,14 @@ project "Sandbox"
     includedirs
     {
         "Claire/src",
-        "ext/glm"
+        "ext/glm",
+        "third_party/imgui"
     }
 
     links
     {
-        "Claire"
+        "Claire",
+        "ImGui"
     }
 
     filter "system:windows"
@@ -103,3 +115,4 @@ project "Sandbox"
 		runtime "Release"
         optimize "On"
         buildoptions "/MT"
+
