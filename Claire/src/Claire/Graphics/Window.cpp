@@ -107,7 +107,7 @@ Window::Window(uint32_t width, uint32_t height, LPCWSTR title, API api)
 		DX11Context::Get().Init(*this);
 		break;
 	case API::DirectX12:
-		DX12Context::Get().Init(m_Handle);
+		DX12Context::Get().Init(*this);
 		break;
 	}
 }

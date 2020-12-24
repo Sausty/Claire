@@ -15,7 +15,7 @@ struct vertex
 
 int main()
 {
-	Camera camera(glm::vec3(0, 0, -3));
+	Camera camera(glm::vec3(0, 0, -10));
 
 	vertex vertices[] = 
 	{

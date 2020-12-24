@@ -63,18 +63,22 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 		__debugbreak();
 	}
 
-	result = device->CreateDepthStencilView(m_DepthStencilBuffer, NULL, &m_DepthStencilView);
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+	depthStencilViewDesc.Format = depthStencilDesc.Format;
+	if (depthStencilDesc.SampleDesc.Count > 1) depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	else depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
+
+	result = device->CreateDepthStencilView(m_DepthStencilBuffer, &depthStencilViewDesc, &m_DepthStencilView);
 	if (FAILED(result))
 	{
 		__debugbreak();
 	}
 
-	D3D11_DEPTH_STENCIL_DESC depthstencildesc;
-	ZeroMemory(&depthstencildesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
+	D3D11_DEPTH_STENCIL_DESC depthstencildesc = {};
 	depthstencildesc.DepthEnable = true;
 	depthstencildesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+	depthstencildesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 
 	result = device->CreateDepthStencilState(&depthstencildesc, &m_DepthStencilState);
 	if (FAILED(result))
@@ -82,9 +86,7 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 		__debugbreak();
 	}
 
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
-
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
 	rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 	result = device->CreateRasterizerState(&rasterizerDesc, &m_RasterizerState);
@@ -93,8 +95,7 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 		__debugbreak();
 	}
 
-	D3D11_SAMPLER_DESC sampDesc;
-	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	D3D11_SAMPLER_DESC sampDesc = {};
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -109,6 +110,7 @@ void DX11SwapChain::Create(HWND hwnd, uint32_t width, uint32_t height)
 	}
 
 	DX11Context::Get().GetDeviceContext()->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+	DX11Context::Get().GetDeviceContext()->OMSetDepthStencilState(m_DepthStencilState, 0);
 
 	D3D11_VIEWPORT vp;
 	vp.Width = (FLOAT)width;

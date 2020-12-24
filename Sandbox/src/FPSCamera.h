@@ -145,7 +145,6 @@ public:
 private:
     void updateCameraVectors()
     {
-        // calculate the new Front vector
         glm::vec3 front;
         front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
         front.y = sin(glm::radians(Pitch));
